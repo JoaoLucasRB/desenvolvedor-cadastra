@@ -8,3 +8,8 @@ export interface Product {
   size: Array<string>;
   date: string;
 }
+
+export interface CartActions {
+  add: () => void;
+  remove: () => void;
+}

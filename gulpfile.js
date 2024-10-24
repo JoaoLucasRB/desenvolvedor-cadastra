@@ -15,14 +15,22 @@ const paths = {
     src: "src/ts/index.ts",
     watch: "src/ts/**/*.ts",
   },
+  allScripts: {
+    src: "src/ts/*.ts",
+    watch: "src/ts/**/*.ts",
+  },
   styles: {
     src: "src/scss/main.scss",
+    watch: "src/scss/**/*.scss",
   },
   img: {
     src: "src/img/**/*",
   },
   html: {
     src: "src/index.html",
+  },
+  components: {
+    src: "src/html/*.html",
   },
   dest: "dist",
   temp: ".tmp",
@@ -82,19 +90,31 @@ function html() {
   return src(paths.html.src).pipe(browserSync.stream()).pipe(dest(paths.dest));
 }
 
+function components() {
+  return src(paths.components.src).pipe(browserSync.stream()).pipe(dest(paths.dest));
+}
+
 function img() {
   return src(paths.img.src).pipe(dest(paths.dest + "/img"));
 }
 
-const build = series(clean, parallel(styles, scripts, html, img));
+const build = series(clean, parallel(styles, scripts, html, components, img));
 const dev = () => {
   watch(paths.scripts.watch, { ignoreInitial: false }, scripts).on(
     "change",
     browserSync.reload
   );
-  watch(paths.styles.src, { ignoreInitial: false }, styles);
+  watch(paths.styles.watch, { ignoreInitial: false }, styles).on(
+    "change",
+    browserSync.reload
+  );
+  // watch(paths.styles.src, { ignoreInitial: false }, styles);
   watch(paths.img.src, { ignoreInitial: false }, img);
   watch(paths.html.src, { ignoreInitial: false }, html).on(
+    "change",
+    browserSync.reload
+  );
+  watch(paths.components.src, { ignoreInitial: false }, components).on(
     "change",
     browserSync.reload
   );
